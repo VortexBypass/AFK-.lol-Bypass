@@ -32,61 +32,55 @@
             style.textContent = `
                 #afkLol-bypass-panel {
                     position: fixed;
-                    top: 0;
-                    left: 0;
-                    width: 100%;
-                    height: 100%;
-                    background: rgba(4,6,15,0.75);
-                    display: flex;
-                    justify-content: center;
-                    align-items: center;
-                    z-index: 2147483646;
-                    font-family: 'Inter', system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
-                }
-                #afkLol-bypass-content {
+                    top: 20px;
+                    right: 20px;
                     background: linear-gradient(180deg, #071027, #0b1220);
                     color: #e6eef8;
-                    padding: 26px 22px 20px 22px;
+                    padding: 20px;
                     border-radius: 12px;
-                    text-align: center;
                     box-shadow: 0 10px 30px rgba(2,6,23,0.7);
-                    max-width: 520px;
-                    width: 94%;
-                    position: relative;
+                    max-width: 400px;
+                    width: auto;
+                    z-index: 2147483647;
                     border: 1px solid rgba(124,58,237,0.12);
-                    box-sizing: border-box;
+                    font-family: 'Inter', system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+                    pointer-events: none;
+                }
+                #afkLol-bypass-content {
+                    text-align: center;
+                    pointer-events: none;
                 }
                 #afkLol-bypass-logo {
-                    width: 80px;
-                    height: 80px;
-                    border-radius: 12px;
-                    margin: 6px 0 12px 0;
+                    width: 60px;
+                    height: 60px;
+                    border-radius: 10px;
+                    margin: 0 0 10px 0;
                     background: rgba(255,255,255,0.02);
-                    padding: 6px;
+                    padding: 4px;
                     object-fit: cover;
-                    float: left;
                 }
                 #afkLol-bypass-title {
-                    font-size: 24px;
+                    font-size: 18px;
                     font-weight: 600;
-                    margin: 6px 0 8px 0;
+                    margin: 0 0 12px 0;
                     color: #f3f6fb;
-                    clear: both;
-                    text-shadow: 0 0 10px rgba(124, 58, 237, 0.7), 0 0 20px rgba(124, 58, 237, 0.5), 0 0 30px rgba(124, 58, 237, 0.3);
-                    animation: glow 2s ease-in-out infinite alternate;
-                }
-                @keyframes glow {
-                    from { text-shadow: 0 0 10px rgba(124, 58, 237, 0.7), 0 0 20px rgba(124, 58, 237, 0.5), 0 0 30px rgba(124, 58, 237, 0.3); }
-                    to { text-shadow: 0 0 15px rgba(124, 58, 237, 0.8), 0 0 25px rgba(124, 58, 237, 0.6), 0 0 35px rgba(124, 58, 237, 0.4); }
+                    text-shadow: 0 0 10px rgba(124, 58, 237, 0.7), 0 0 20px rgba(124, 58, 237, 0.5);
                 }
                 #afkLol-bypass-status {
-                    font-size: 16px;
+                    font-size: 14px;
                     color: #b9c7e6;
-                    padding: 20px;
+                    padding: 10px;
                     background: rgba(255,255,255,0.02);
                     border-radius: 8px;
                     border: 1px solid rgba(255,255,255,0.06);
-                    margin-top: 10px;
+                }
+                @media (max-width: 768px) {
+                    #afkLol-bypass-panel {
+                        top: 10px;
+                        right: 10px;
+                        left: 10px;
+                        max-width: none;
+                    }
                 }
             `;
             document.head.appendChild(style);
@@ -103,10 +97,14 @@
     }
 
     let panel = null;
-    setTimeout(() => { panel = new AFKBypassPanel(); panel.show('Complete The Captcha'); }, 100);
-
-    if (host.includes("key.volcano.wtf")) handleVolcano();
-    else if (host.includes("work.ink")) handleWorkInk();
+    
+    if (host.includes("key.volcano.wtf") || host.includes("work.ink")) {
+        setTimeout(() => { 
+            panel = new AFKBypassPanel(); 
+            if (host.includes("key.volcano.wtf")) handleVolcano();
+            else if (host.includes("work.ink")) handleWorkInk();
+        }, 100);
+    }
 
     function handleVolcano() {
         if (panel) panel.show('Complete The Captcha');
@@ -122,31 +120,28 @@
                         ? [node]
                         : node.querySelectorAll('#primaryButton[type="submit"], button[type="submit"], a, input[type=button], input[type=submit]')
                     : document.querySelectorAll('#primaryButton[type="submit"], button[type="submit"], a, input[type=button], input[type=submit]');
+                
                 for (const btn of buttons) {
                     const text = (btn.innerText || btn.value || "").trim().toLowerCase();
                     if (text.includes("continue") || text.includes("next step")) {
                         const disabled = btn.disabled || btn.getAttribute("aria-disabled") === "true";
                         const style = getComputedStyle(btn);
                         const visible = style.display !== "none" && style.visibility !== "hidden" && btn.offsetParent !== null;
+                        
                         if (visible && !disabled) {
                             alreadyDoneContinue = true;
                             if (panel) panel.show('Captcha Completed');
                             if (debug) console.log('[Debug] Captcha Solved');
 
-                            for (const btn of buttons) {
-                                const currentBtn = btn;
-                                const currentPanel = panel;
-
-                                setTimeout(() => {
-                                    try {
-                                        currentBtn.click();
-                                        if (currentPanel) currentPanel.show('Redirecting to Work.ink...');
-                                        if (debug) console.log('[Debug] Clicking Continue');
-                                    } catch (err) {
-                                        if (debug) console.log('[Debug] No Continue Found', err);
-                                    }
-                                }, 300);
-                            }
+                            setTimeout(() => {
+                                try {
+                                    btn.click();
+                                    if (panel) panel.show('Redirecting to Work.ink...');
+                                    if (debug) console.log('[Debug] Clicking Continue');
+                                } catch (err) {
+                                    if (debug) console.log('[Debug] No Continue Found', err);
+                                }
+                            }, 300);
                             return true;
                         }
                     }
@@ -158,14 +153,17 @@
                     ? node
                     : node.querySelector("#copy-key-btn, .copy-btn, [aria-label='Copy']")
                 : document.querySelector("#copy-key-btn, .copy-btn, [aria-label='Copy']");
-            if (copyBtn) {
-                setInterval(() => {
+            
+            if (copyBtn && !alreadyDoneCopy) {
+                alreadyDoneCopy = true;
+                const copyInterval = setInterval(() => {
                     try {
                         copyBtn.click();
                         if (debug) console.log('[Debug] Copy button spam click');
                         if (panel) panel.show('Bypass successful! Key copied');
                     } catch (err) {
                         if (debug) console.log('[Debug] No Copy Found', err);
+                        clearInterval(copyInterval);
                     }
                 }, 500);
                 return true;
@@ -199,7 +197,12 @@
             }
         });
 
-        mo.observe(document.documentElement, { childList: true, subtree: true, attributes: true, attributeFilter: ['disabled', 'aria-disabled', 'style'] });
+        mo.observe(document.documentElement, { 
+            childList: true, 
+            subtree: true, 
+            attributes: true, 
+            attributeFilter: ['disabled', 'aria-disabled', 'style'] 
+        });
 
         if (actOnCheckpoint()) {
             if (alreadyDoneCopy) {
