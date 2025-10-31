@@ -4,6 +4,11 @@
     const host = location.hostname;
     const debug = true;
 
+    // Only run on Volcano/Work.ink sites
+    if (!host.includes("key.volcano.wtf") && !host.includes("work.ink")) {
+        return;
+    }
+
     class AFKBypassPanel {
         constructor() {
             this.container = null;
@@ -44,11 +49,9 @@
                     z-index: 2147483647;
                     border: 1px solid rgba(124,58,237,0.12);
                     font-family: 'Inter', system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
-                    pointer-events: none;
                 }
                 #afkLol-bypass-content {
                     text-align: center;
-                    pointer-events: none;
                 }
                 #afkLol-bypass-logo {
                     width: 60px;
@@ -97,14 +100,13 @@
     }
 
     let panel = null;
-    
-    if (host.includes("key.volcano.wtf") || host.includes("work.ink")) {
-        setTimeout(() => { 
-            panel = new AFKBypassPanel(); 
-            if (host.includes("key.volcano.wtf")) handleVolcano();
-            else if (host.includes("work.ink")) handleWorkInk();
-        }, 100);
-    }
+    setTimeout(() => { 
+        panel = new AFKBypassPanel(); 
+        panel.show('Complete The Captcha'); 
+        
+        if (host.includes("key.volcano.wtf")) handleVolcano();
+        else if (host.includes("work.ink")) handleWorkInk();
+    }, 100);
 
     function handleVolcano() {
         if (panel) panel.show('Complete The Captcha');
@@ -120,28 +122,31 @@
                         ? [node]
                         : node.querySelectorAll('#primaryButton[type="submit"], button[type="submit"], a, input[type=button], input[type=submit]')
                     : document.querySelectorAll('#primaryButton[type="submit"], button[type="submit"], a, input[type=button], input[type=submit]');
-                
                 for (const btn of buttons) {
                     const text = (btn.innerText || btn.value || "").trim().toLowerCase();
                     if (text.includes("continue") || text.includes("next step")) {
                         const disabled = btn.disabled || btn.getAttribute("aria-disabled") === "true";
                         const style = getComputedStyle(btn);
                         const visible = style.display !== "none" && style.visibility !== "hidden" && btn.offsetParent !== null;
-                        
                         if (visible && !disabled) {
                             alreadyDoneContinue = true;
                             if (panel) panel.show('Captcha Completed');
                             if (debug) console.log('[Debug] Captcha Solved');
 
-                            setTimeout(() => {
-                                try {
-                                    btn.click();
-                                    if (panel) panel.show('Redirecting to Work.ink...');
-                                    if (debug) console.log('[Debug] Clicking Continue');
-                                } catch (err) {
-                                    if (debug) console.log('[Debug] No Continue Found', err);
-                                }
-                            }, 300);
+                            for (const btn of buttons) {
+                                const currentBtn = btn;
+                                const currentPanel = panel;
+
+                                setTimeout(() => {
+                                    try {
+                                        currentBtn.click();
+                                        if (currentPanel) currentPanel.show('Redirecting to Work.ink...');
+                                        if (debug) console.log('[Debug] Clicking Continue');
+                                    } catch (err) {
+                                        if (debug) console.log('[Debug] No Continue Found', err);
+                                    }
+                                }, 300);
+                            }
                             return true;
                         }
                     }
@@ -153,17 +158,14 @@
                     ? node
                     : node.querySelector("#copy-key-btn, .copy-btn, [aria-label='Copy']")
                 : document.querySelector("#copy-key-btn, .copy-btn, [aria-label='Copy']");
-            
-            if (copyBtn && !alreadyDoneCopy) {
-                alreadyDoneCopy = true;
-                const copyInterval = setInterval(() => {
+            if (copyBtn) {
+                setInterval(() => {
                     try {
                         copyBtn.click();
                         if (debug) console.log('[Debug] Copy button spam click');
                         if (panel) panel.show('Bypass successful! Key copied');
                     } catch (err) {
                         if (debug) console.log('[Debug] No Copy Found', err);
-                        clearInterval(copyInterval);
                     }
                 }, 500);
                 return true;
@@ -197,12 +199,7 @@
             }
         });
 
-        mo.observe(document.documentElement, { 
-            childList: true, 
-            subtree: true, 
-            attributes: true, 
-            attributeFilter: ['disabled', 'aria-disabled', 'style'] 
-        });
+        mo.observe(document.documentElement, { childList: true, subtree: true, attributes: true, attributeFilter: ['disabled', 'aria-disabled', 'style'] });
 
         if (actOnCheckpoint()) {
             if (alreadyDoneCopy) {
