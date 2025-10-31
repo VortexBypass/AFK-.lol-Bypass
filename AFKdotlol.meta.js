@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         AFK™.lol  Bypass
 // @namespace    https://discord.gg/sideloading
-// @version      1.0.6
+// @version      1.0.7
 // @description  Bypass rekonise, bstlar, mboost.me, Linkvertise and Link-Unlock using multiple backends (TRW API, direct endpoints).
 // @author       AFK™.lol
 // @match        https://bstlar.com/*
