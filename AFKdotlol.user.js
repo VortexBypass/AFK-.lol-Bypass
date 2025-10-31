@@ -1,7 +1,11 @@
+
+
+
+
 // ==UserScript==
 // @name         AFK™.lol  Bypass
 // @namespace    https://discord.gg/sideloading
-// @version      1.0.7
+// @version      1.0.6
 // @description  Bypass rekonise bstlar and mboost.me
 // @author       AFK™.lol
 // @match        https://bstlar.com/*
@@ -12,15 +16,15 @@
 // @icon         https://i.ibb.co/KcXkWgGm/B57-FBD3-E-489-E-4-F0-D-A5-C0-08017-DA44-C4-E.png
 // @grant        none
 // @run-at       document-end
-// @downloadURL  https://raw.githubusercontent.com/AFK-.lol-Bypass/AFKdotlol.user.js/main/AFKdotlol.user.js
-// @updateURL    https://raw.githubusercontent.com/AFK-.lol-Bypass/AFKdotlol.meta.js/main/AFKdotlol.meta.js
+// @downloadURL  https://raw.githubusercontent.com/VortexBypass/AFK-.lol-Bypass/main/AFKdotlol.user.js
+// @updateURL    https://raw.githubusercontent.com/VortexBypass/AFK-.lol-Bypass/main/AFKdotlol.meta.js
 // ==/UserScript==
 
 (function() {
     "use strict";
 
-    const META_UPDATE_URL = "https://raw.githubusercontent.com/AFK-.lol-Bypass/AFKdotlol.meta.js/main/AFKdotlol.meta.js";
-    const USER_SCRIPT_URL = "https://raw.githubusercontent.com/AFK-.lol-Bypass/AFKdotlol.user.js/main/AFKdotlol.user.js";
+    const META_UPDATE_URL = "https://raw.githubusercontent.com/VortexBypass/AFK-.lol-Bypass/main/AFKdotlol.meta.js";
+    const USER_SCRIPT_URL = "https://raw.githubusercontent.com/VortexBypass/AFK-.lol-Bypass/main/AFKdotlol.user.js";
     const META_VERSION_KEY = 'afkLol_meta_version_v1';
     const META_SNAPSHOT_KEY = 'afkLol_meta_snapshot_v1';
     const TRW_API_BASE = "https://trw.lat/api/free/bypass?url=";
