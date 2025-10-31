@@ -7,7 +7,6 @@
 
     const EAS_TARGET_DOMAINS = ["shorter.me","sub2get.com","sub4unlock.io","sub4unlock.com","sub4unlock.net","subfinal.com","unlocknow.net","ytsubme.com","paste-drop.com","pastebin.com","pastecanyon.com","pastehill.com","pastemode.com","rentry.org","paster.so"];
     const TRW_TARGET_DOMAINS = ['linkvertise.com', 'link-unlock.com'];
-    const LOOT_TARGET_DOMAINS = ["loot-link.com","loot-links.com","lootlink.org","lootlinks.co","lootdest.info","lootdest.org","lootdest.com","links-loot.com","linksloot.net"];
 
     function isEasTarget() {
         try {
@@ -22,15 +21,6 @@
         try {
             const host = window.location.hostname;
             return TRW_TARGET_DOMAINS.includes(host);
-        } catch (err) {
-            return false;
-        }
-    }
-
-    function isLootTarget() {
-        try {
-            const host = window.location.hostname;
-            return LOOT_TARGET_DOMAINS.includes(host);
         } catch (err) {
             return false;
         }
@@ -103,7 +93,6 @@
     window.afkLolApi = {
         isEasTarget: isEasTarget,
         isTrwTarget: isTrwTarget,
-        isLootTarget: isLootTarget,
         handleEasApi: handleEasApi,
         handleTrwApi: handleTrwApi
     };
