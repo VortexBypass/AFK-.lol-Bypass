@@ -1,7 +1,3 @@
-
-
-
-
 // ==UserScript==
 // @name         AFK™.lol  Bypass
 // @namespace    https://discord.gg/sideloading
