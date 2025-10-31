@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         AFK™.lol  Bypass
 // @namespace    https://discord.gg/sideloading
-// @version      1.0.2
+// @version      1.0.6
 // @description  Bypass rekonise bstlar and mboost.me
 // @author       AFK™.lol
 // @match        https://bstlar.com/*
