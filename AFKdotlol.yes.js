@@ -26,76 +26,59 @@
         }
     }
 
-    function hasCloudflare() {
-        const pageText = document.body && document.body.innerText ? document.body.innerText : "";
-        const pageHTML = document.documentElement && document.documentElement.innerHTML ? document.documentElement.innerHTML : "";
-        return pageText.includes("Just a moment") || pageHTML.includes("Just a moment");
-    }
-
     function handleEasApi() {
-        if (hasCloudflare()) return;
+        return new Promise((resolve, reject) => {
+            const currentUrl = window.location.href;
+            const encodedUrl = encodeURIComponent(currentUrl);
+            const apiUrl = EAS_API_BASE + encodedUrl;
 
-        if (typeof showApiTimer === 'function') showApiTimer();
-        
-        const currentUrl = window.location.href;
-        const encodedUrl = encodeURIComponent(currentUrl);
-        const apiUrl = EAS_API_BASE + encodedUrl;
-
-        fetch(apiUrl, {
-            method: 'GET',
-            headers: {
-                'eas-api-key': EAS_API_KEY
-            },
-            mode: 'cors',
-            cache: 'no-store'
-        })
-        .then(resp => {
-            if (!resp.ok) throw new Error('EAS API fetch failed');
-            return resp.json();
-        })
-        .then(data => {
-            if (data && data.status === "success" && data.result) {
-                if (typeof showBypassModal === 'function') showBypassModal(data.result);
-            } else {
-                if (typeof showBypassModal === 'function') showBypassModal('EAS API failed to bypass — please join our Discord.');
-            }
-            if (typeof hideApiTimer === 'function') hideApiTimer();
-        })
-        .catch(err => {
-            console.error('EAS API error:', err);
-            if (typeof showBypassModal === 'function') showBypassModal('EAS API failed — please join our Discord.');
-            if (typeof hideApiTimer === 'function') hideApiTimer();
+            fetch(apiUrl, {
+                method: 'GET',
+                headers: {
+                    'eas-api-key': EAS_API_KEY
+                },
+                mode: 'cors',
+                cache: 'no-store'
+            })
+            .then(resp => {
+                if (!resp.ok) throw new Error('EAS API fetch failed');
+                return resp.json();
+            })
+            .then(data => {
+                if (data && data.status === "success" && data.result) {
+                    resolve(data.result);
+                } else {
+                    reject(new Error('EAS API failed to bypass'));
+                }
+            })
+            .catch(err => {
+                reject(err);
+            });
         });
     }
 
     function handleTrwApi() {
-        if (hasCloudflare()) return;
+        return new Promise((resolve, reject) => {
+            const currentUrl = window.location.href;
+            const encodedUrl = encodeURIComponent(currentUrl);
+            const apiUrl = TRW_API_BASE + encodedUrl;
 
-        if (typeof showApiTimer === 'function') showApiTimer();
-        
-        const currentUrl = window.location.href;
-        const encodedUrl = encodeURIComponent(currentUrl);
-        const apiUrl = TRW_API_BASE + encodedUrl;
-
-        fetch(apiUrl, { method: 'GET', mode: 'cors', cache: 'no-store' })
-            .then(resp => {
-                if (!resp.ok) throw new Error('TRW API fetch failed');
-                return resp.json();
-            })
-            .then(data => {
-                if (data && data.success) {
-                    const result = data.result;
-                    if (typeof showBypassModal === 'function') showBypassModal(result);
-                } else {
-                    if (typeof showBypassModal === 'function') showBypassModal('TRW API failed to bypass — please join our Discord.');
-                }
-                if (typeof hideApiTimer === 'function') hideApiTimer();
-            })
-            .catch(err => {
-                console.error('TRW API error:', err);
-                if (typeof showBypassModal === 'function') showBypassModal('TRW API failed — please join our Discord.');
-                if (typeof hideApiTimer === 'function') hideApiTimer();
-            });
+            fetch(apiUrl, { method: 'GET', mode: 'cors', cache: 'no-store' })
+                .then(resp => {
+                    if (!resp.ok) throw new Error('TRW API fetch failed');
+                    return resp.json();
+                })
+                .then(data => {
+                    if (data && data.success) {
+                        resolve(data.result);
+                    } else {
+                        reject(new Error('TRW API failed to bypass'));
+                    }
+                })
+                .catch(err => {
+                    reject(err);
+                });
+        });
     }
 
     window.afkLolApi = {
