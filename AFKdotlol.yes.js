@@ -41,8 +41,6 @@
             const currentUrl = window.location.href;
             
             const apiUrl = `${EAS_API_BASE}?url=${encodeURIComponent(currentUrl)}`;
-            
-            console.log('EAS API Request:', apiUrl);
 
             fetch(apiUrl, {
                 method: 'GET',
@@ -61,8 +59,6 @@
                 return resp.json();
             })
             .then(data => {
-                console.log('EAS API Response:', data);
-                
                 if (data && data.status === "success" && data.result) {
                     resolve(data.result);
                 } else if (data && data.status === "error") {
@@ -72,7 +68,6 @@
                 }
             })
             .catch(err => {
-                console.error('EAS API fetch error:', err);
                 reject(err);
             });
         });
