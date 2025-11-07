@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         AFK™.lol Bypass
 // @namespace    https://discord.gg/sideloading
-// @version      1.1.4
+// @version      1.1.5
 // @description  Bypass rekonise bstlar and mboost.me with Volcano/Work.ink support
 // @author       AFK™.lol
 // @match        https://bstlar.com/*
