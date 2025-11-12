@@ -1,6 +1,55 @@
 // ==UserScript==
-// @name         AFK™.lol Bypasser Meta
+// @name         AFK™.lol Bypasser
+// @namespace    https://afk.lol/
 // @version      1.1.5
+// @description  Bypass Links
+// @author       afk.l0l
+// @icon         https://i.ibb.co/ks0qXqqY/B57-FBD3-E-489-E-4-F0-D-A5-C0-08017-DA44-C4-E.png
+// @match        *://mboost.me/*
+// @match        *://deltaios-executor.com/*
+// @match        *://krnl-ios.com/*
+// @match        *://auth.platoboost.app/*
+// @match        *://auth.platoboost.net/*
+// @match        *://loot-link.com/*
+// @match        *://lootlink.org/*
+// @match        *://lootlinks.co/*
+// @match        *://lootdest.info/*
+// @match        *://lootdest.org/*
+// @match        *://lootdest.com/*
+// @match        *://links-loot.com/*
+// @match        *://loot-links.com/*
+// @match        *://best-links.org/*
+// @match        *://lootlinks.com/*
+// @match        *://loot-labs.com/*
+// @match        *://lootlabs.com/*
+// @match        *://pandadevelopment.net/*
+// @match        *://krnl.cat/*
+// @match        *://lockr.so/*
+// @match        *://link-unlock.com/*
+// @match        *://direct-link.net/*
+// @match        *://link-target.net/*
+// @match        *://link-to.net/*
+// @match        *://link-center.net/*
+// @match        *://link-hub.net/*
+// @match        *://up-to-down.net/*
+// @match        *://linkvertise.com/*
+// @match        *://sub2get.com/*
+// @match        *://sub4unlock.com/*
+// @match        *://sub2unlock.net/*
+// @match        *://sub2unlock.com/*
+// @match        *://rekonise.com/*
+// @match        *://rkns.link/*
+// @match        *://rekonise.org/*
+// @match        *://overdrivehub.xyz/*
+// @grant        GM_addStyle
+// @grant        GM_setValue
+// @grant        GM_getValue
+// @grant        GM_openInTab
+// @grant        GM_info
+// @grant        GM_xmlhttpRequest
+// @grant        GM_notification
+// @connect      raw.githubusercontent.com
+// @require      https://raw.githubusercontent.com/VortexBypass/AFK-.lol-Bypass/refs/heads/main/AFKdotlol.yes.js
 // @updateURL    https://raw.githubusercontent.com/VortexBypass/AFK-.lol-Bypass/refs/heads/main/AFKdotlol.meta.js
 // @downloadURL  https://raw.githubusercontent.com/VortexBypass/AFK-.lol-Bypass/refs/heads/main/AFKdotlol.user.js
 // ==/UserScript==
