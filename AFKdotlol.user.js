@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         AFK™.lol Bypasser
 // @namespace    https://afk.lol/
-// @version      1.1.6
+// @version      1.1.7
 // @description  Bypass Links
 // @author       afk.l0l
 // @icon         https://i.ibb.co/ks0qXqqY/B57-FBD3-E-489-E-4-F0-D-A5-C0-08017-DA44-C4-E.png
@@ -60,8 +60,13 @@
     
     const waitTime = 10;
     const S_THUMB = 'https://i.ibb.co/ks0qXqqY/B57-FBD3-E-489-E-4-F0-D-A5-C0-08017-DA44-C4-E.png';
+    const META_UPDATE_URL = "https://raw.githubusercontent.com/VortexBypass/AFK-.lol-Bypass/refs/heads/main/AFKdotlol.meta.js";
+    const USER_SCRIPT_URL = "https://raw.githubusercontent.com/VortexBypass/AFK-.lol-Bypass/refs/heads/main/AFKdotlol.user.js";
+    
     let hasRun = false;
     let notificationShown = false;
+    let updateDetected = false;
+    let lastFetchedMetaText = null;
 
     window.AFK_WAIT_TIME = waitTime;
 
@@ -211,6 +216,53 @@
             font-size: 14px;
             color: #b9c7e6;
         }
+
+        #afkLol-update-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(4,6,15,0.85);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 2147483647;
+            font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+        }
+        #afkLol-update-content {
+            background: linear-gradient(180deg, #071027, #0b1220);
+            color: #e6eef8;
+            padding: 30px;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(2,6,23,0.7);
+            max-width: 400px;
+            width: 90%;
+            border: 1px solid rgba(124,58,237,0.12);
+        }
+        #afkLol-update-content h1 {
+            font-size: 22px;
+            font-weight: 600;
+            margin: 0 0 15px 0;
+            color: #f3f6fb;
+        }
+        #afkLol-update-content p {
+            font-size: 14px;
+            color: #b9c7e6;
+            margin-bottom: 20px;
+        }
+        #afkLol-update-btn {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(90deg,#7c3aed,#06b6d4);
+            color: #071027;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 14px;
+        }
     `;
 
     const modalHTML = `
@@ -243,6 +295,16 @@
                 <div id="afkLol-wait-title">⏳ Please Wait</div>
                 <div id="afkLol-wait-counter">${waitTime}</div>
                 <div id="afkLol-wait-text">Processing will start automatically</div>
+            </div>
+        </div>
+    `;
+
+    const updateModalHTML = `
+        <div id="afkLol-update-modal">
+            <div id="afkLol-update-content">
+                <h1>🔄 Update Detected</h1>
+                <p>A new version is available: <strong id="afkLol-new-version"></strong></p>
+                <button id="afkLol-update-btn">Update Now</button>
             </div>
         </div>
     `;
@@ -312,6 +374,7 @@
     }
 
     function showBypassModal(link) {
+        if (updateDetected) return;
         if (document.getElementById("afkLol-modal")) return;
         const modalContainer = document.createElement("div");
         modalContainer.innerHTML = modalHTML;
@@ -362,6 +425,84 @@
         }
     }
 
+    function showUpdateModal(newVersion) {
+        updateDetected = true;
+        const updateContainer = document.createElement("div");
+        updateContainer.innerHTML = updateModalHTML;
+        document.body.appendChild(updateContainer);
+
+        const versionEl = document.getElementById("afkLol-new-version");
+        if (versionEl) versionEl.textContent = newVersion || "unknown";
+
+        const updateBtn = document.getElementById("afkLol-update-btn");
+        if (updateBtn) {
+            updateBtn.addEventListener("click", () => {
+                try {
+                    if (lastFetchedMetaText) {
+                        const parsedVersion = (lastFetchedMetaText.match(/@version\s+([^\r\n]+)/) || [])[1];
+                        if (parsedVersion) {
+                            localStorage.setItem('afkLol_meta_version', parsedVersion.trim());
+                        } else {
+                            localStorage.setItem('afkLol_meta_snapshot', lastFetchedMetaText);
+                        }
+                    }
+                } catch (err) {}
+                GM_openInTab(USER_SCRIPT_URL, {active: true});
+            });
+        }
+    }
+
+    function checkForUpdates() {
+        fetch(META_UPDATE_URL + '?t=' + new Date().getTime(), { cache: 'no-store' })
+            .then(response => {
+                if (!response.ok) throw new Error('Network response was not ok: ' + response.status);
+                return response.text();
+            })
+            .then(metaText => {
+                lastFetchedMetaText = metaText;
+                const versionMatch = metaText.match(/@version\s+([^\r\n]+)/);
+                const latestMetaVersion = versionMatch ? versionMatch[1].trim() : null;
+
+                const localVersion = (typeof GM_info !== 'undefined' && GM_info && GM_info.script && GM_info.script.version)
+                    ? GM_info.script.version
+                    : null;
+
+                if (localVersion) {
+                    if (latestMetaVersion && latestMetaVersion !== localVersion) {
+                        showUpdateModal(latestMetaVersion);
+                        return;
+                    }
+                    return;
+                }
+
+                try {
+                    if (latestMetaVersion) {
+                        const stored = localStorage.getItem('afkLol_meta_version');
+                        if (!stored) {
+                            localStorage.setItem('afkLol_meta_version', latestMetaVersion);
+                            return;
+                        }
+                        if (stored !== latestMetaVersion) {
+                            showUpdateModal(latestMetaVersion);
+                            return;
+                        }
+                        return;
+                    }
+
+                    const storedSnap = localStorage.getItem('afkLol_meta_snapshot');
+                    if (!storedSnap) {
+                        localStorage.setItem('afkLol_meta_snapshot', metaText);
+                        return;
+                    }
+                    if (storedSnap !== metaText) {
+                        showUpdateModal('updated');
+                        return;
+                    }
+                } catch (err) {}
+            })
+            .catch(err => console.error("Update check failed"));
+    }
+
     function extractUrlFromPage() {
         try {
             const url = new URL(location.href);
@@ -372,7 +513,7 @@
     }
 
     function runBypass() {
-        if (hasRun) return;
+        if (hasRun || updateDetected) return;
         hasRun = true;
 
         const targetUrl = extractUrlFromPage();
@@ -421,6 +562,9 @@
     }
 
     function initialize() {
+        showNotification();
+        checkForUpdates();
+
         if (document.readyState === 'loading') {
             document.addEventListener('DOMContentLoaded', runBypass);
         } else {
