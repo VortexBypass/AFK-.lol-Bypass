@@ -62,6 +62,8 @@
     const S_THUMB = 'https://i.ibb.co/ks0qXqqY/B57-FBD3-E-489-E-4-F0-D-A5-C0-08017-DA44-C4-E.png';
     const META_UPDATE_URL = "https://raw.githubusercontent.com/VortexBypass/AFK-.lol-Bypass/refs/heads/main/AFKdotlol.meta.js";
     const USER_SCRIPT_URL = "https://raw.githubusercontent.com/VortexBypass/AFK-.lol-Bypass/refs/heads/main/AFKdotlol.user.js";
+    const META_VERSION_KEY = 'afkLol_meta_version_v1';
+    const META_SNAPSHOT_KEY = 'afkLol_meta_snapshot_v1';
     
     let hasRun = false;
     let notificationShown = false;
@@ -77,7 +79,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(4,6,15,0.75);
+            background: rgba(4,6,15,0.95);
             display: flex;
             justify-content: center;
             align-items: center;
@@ -87,63 +89,65 @@
         #afkLol-modal-content {
             background: linear-gradient(180deg, #071027, #0b1220);
             color: #e6eef8;
-            padding: 26px 22px 20px 22px;
-            border-radius: 12px;
+            padding: 30px;
+            border-radius: 16px;
             text-align: center;
-            box-shadow: 0 10px 30px rgba(2,6,23,0.7);
-            max-width: 520px;
-            width: 94%;
-            position: relative;
-            border: 1px solid rgba(124,58,237,0.12);
+            box-shadow: 0 20px 60px rgba(2,6,23,0.8);
+            max-width: 500px;
+            width: 90%;
+            border: 1px solid rgba(124,58,237,0.15);
             box-sizing: border-box;
+            margin: 20px;
         }
         #afkLol-logo {
             width: 80px;
             height: 80px;
             border-radius: 12px;
-            margin: 6px 0 12px 0;
+            margin: 0 auto 15px auto;
+            display: block;
             background: rgba(255,255,255,0.02);
             padding: 6px;
             object-fit: cover;
-            float: left;
         }
         #afkLol-title {
             font-size: 24px;
             font-weight: 600;
-            margin: 6px 0 8px 0;
+            margin: 0 0 15px 0;
             color: #f3f6fb;
-            clear: both;
+            text-align: center;
         }
         #afkLol-modal-content p {
-            font-size: 13px;
+            font-size: 14px;
             color: #b9c7e6;
-            margin-bottom: 12px;
+            margin-bottom: 20px;
+            text-align: center;
         }
         #afkLol-link {
             width: 100%;
-            padding: 12px;
-            border: 1px solid rgba(255,255,255,0.06);
-            border-radius: 8px;
-            background: rgba(255,255,255,0.02);
-            text-align: left;
-            font-size: 13px;
+            padding: 15px;
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 10px;
+            background: rgba(255,255,255,0.03);
+            text-align: center;
+            font-size: 14px;
             color: #e6eef8;
-            margin-bottom: 12px;
+            margin-bottom: 15px;
             box-sizing: border-box;
             cursor: pointer;
         }
         #afkLol-link:hover {
-            background: rgba(255,255,255,0.04);
+            background: rgba(255,255,255,0.05);
         }
         #afkLol-redirect-timer {
             width: 100%;
-            padding: 12px;
-            margin-top: 6px;
+            padding: 15px;
+            margin-top: 10px;
             background: linear-gradient(90deg,#7c3aed,#06b6d4);
             color: #071027;
-            border-radius: 8px;
+            border-radius: 10px;
             font-weight: 700;
-            font-size: 14px;
+            font-size: 15px;
+            text-align: center;
         }
 
         #afkLol-notification {
@@ -182,7 +186,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(4,6,15,0.75);
+            background: rgba(4,6,15,0.95);
             display: flex;
             justify-content: center;
             align-items: center;
@@ -192,29 +196,32 @@
         #afkLol-wait-content {
             background: linear-gradient(180deg, #071027, #0b1220);
             color: #e6eef8;
-            padding: 30px;
-            border-radius: 12px;
+            padding: 40px 30px;
+            border-radius: 16px;
             text-align: center;
-            box-shadow: 0 10px 30px rgba(2,6,23,0.7);
+            box-shadow: 0 20px 60px rgba(2,6,23,0.8);
             max-width: 400px;
             width: 90%;
-            border: 1px solid rgba(124,58,237,0.12);
+            border: 1px solid rgba(124,58,237,0.15);
         }
         #afkLol-wait-title {
-            font-size: 22px;
+            font-size: 24px;
             font-weight: 600;
-            margin: 0 0 15px 0;
+            margin: 0 0 20px 0;
             color: #f3f6fb;
+            text-align: center;
         }
         #afkLol-wait-counter {
-            font-size: 48px;
+            font-size: 60px;
             font-weight: 800;
             color: #60a5fa;
-            margin: 20px 0;
+            margin: 25px 0;
+            text-align: center;
         }
         #afkLol-wait-text {
-            font-size: 14px;
+            font-size: 16px;
             color: #b9c7e6;
+            text-align: center;
         }
 
         #afkLol-update-modal {
@@ -223,7 +230,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(4,6,15,0.85);
+            background: rgba(4,6,15,0.95);
             display: flex;
             justify-content: center;
             align-items: center;
@@ -233,35 +240,55 @@
         #afkLol-update-content {
             background: linear-gradient(180deg, #071027, #0b1220);
             color: #e6eef8;
-            padding: 30px;
-            border-radius: 12px;
+            padding: 40px 30px;
+            border-radius: 16px;
             text-align: center;
-            box-shadow: 0 10px 30px rgba(2,6,23,0.7);
-            max-width: 400px;
+            box-shadow: 0 20px 60px rgba(2,6,23,0.8);
+            max-width: 450px;
             width: 90%;
-            border: 1px solid rgba(124,58,237,0.12);
+            border: 1px solid rgba(124,58,237,0.15);
         }
         #afkLol-update-content h1 {
-            font-size: 22px;
+            font-size: 26px;
             font-weight: 600;
-            margin: 0 0 15px 0;
+            margin: 0 0 20px 0;
             color: #f3f6fb;
+            text-align: center;
         }
         #afkLol-update-content p {
-            font-size: 14px;
+            font-size: 16px;
             color: #b9c7e6;
-            margin-bottom: 20px;
+            margin-bottom: 25px;
+            text-align: center;
         }
         #afkLol-update-btn {
             width: 100%;
-            padding: 12px;
+            padding: 15px;
             background: linear-gradient(90deg,#7c3aed,#06b6d4);
             color: #071027;
             border: none;
-            border-radius: 8px;
+            border-radius: 10px;
             cursor: pointer;
             font-weight: 700;
-            font-size: 14px;
+            font-size: 16px;
+        }
+
+        @media (max-width: 480px) {
+            #afkLol-modal-content,
+            #afkLol-wait-content,
+            #afkLol-update-content {
+                width: 85%;
+                margin: 15px;
+                padding: 25px 20px;
+            }
+            #afkLol-wait-counter {
+                font-size: 50px;
+            }
+            #afkLol-title,
+            #afkLol-wait-title,
+            #afkLol-update-content h1 {
+                font-size: 22px;
+            }
         }
     `;
 
@@ -392,7 +419,7 @@
                 linkInput.style.background = "rgba(16, 185, 129, 0.15)";
                 setTimeout(() => {
                     linkInput.value = originalValue;
-                    linkInput.style.background = "rgba(255,255,255,0.02)";
+                    linkInput.style.background = "rgba(255,255,255,0.03)";
                 }, 1000);
             });
         }
@@ -441,9 +468,9 @@
                     if (lastFetchedMetaText) {
                         const parsedVersion = (lastFetchedMetaText.match(/@version\s+([^\r\n]+)/) || [])[1];
                         if (parsedVersion) {
-                            localStorage.setItem('afkLol_meta_version', parsedVersion.trim());
+                            localStorage.setItem(META_VERSION_KEY, parsedVersion.trim());
                         } else {
-                            localStorage.setItem('afkLol_meta_snapshot', lastFetchedMetaText);
+                            localStorage.setItem(META_SNAPSHOT_KEY, lastFetchedMetaText);
                         }
                     }
                 } catch (err) {}
@@ -477,9 +504,9 @@
 
                 try {
                     if (latestMetaVersion) {
-                        const stored = localStorage.getItem('afkLol_meta_version');
+                        const stored = localStorage.getItem(META_VERSION_KEY);
                         if (!stored) {
-                            localStorage.setItem('afkLol_meta_version', latestMetaVersion);
+                            localStorage.setItem(META_VERSION_KEY, latestMetaVersion);
                             return;
                         }
                         if (stored !== latestMetaVersion) {
@@ -489,9 +516,9 @@
                         return;
                     }
 
-                    const storedSnap = localStorage.getItem('afkLol_meta_snapshot');
+                    const storedSnap = localStorage.getItem(META_SNAPSHOT_KEY);
                     if (!storedSnap) {
-                        localStorage.setItem('afkLol_meta_snapshot', metaText);
+                        localStorage.setItem(META_SNAPSHOT_KEY, metaText);
                         return;
                     }
                     if (storedSnap !== metaText) {
@@ -500,7 +527,7 @@
                     }
                 } catch (err) {}
             })
-            .catch(err => console.error("Update check failed"));
+            .catch(err => console.error("Update check failed:", err));
     }
 
     function extractUrlFromPage() {
@@ -562,8 +589,9 @@
     }
 
     function initialize() {
-        showNotification();
-        checkForUpdates();
+        setTimeout(() => {
+            checkForUpdates();
+        }, 2000);
 
         if (document.readyState === 'loading') {
             document.addEventListener('DOMContentLoaded', runBypass);
