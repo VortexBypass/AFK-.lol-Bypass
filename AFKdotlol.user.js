@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         AFK™.lol Bypasser
 // @namespace    https://afk.lol/
-// @version      1.1.5
+// @version      1.1.6
 // @description  Bypass Links
 // @author       afk.l0l
 // @icon         https://i.ibb.co/ks0qXqqY/B57-FBD3-E-489-E-4-F0-D-A5-C0-08017-DA44-C4-E.png
