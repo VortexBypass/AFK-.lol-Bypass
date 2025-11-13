@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         AFK™.lol Bypasser
 // @namespace    https://afk.lol/
-// @version      1.1.7
+// @version      1.1.5
 // @description  Bypass Links
 // @author       afk.l0l
 // @icon         https://i.ibb.co/ks0qXqqY/B57-FBD3-E-489-E-4-F0-D-A5-C0-08017-DA44-C4-E.png
@@ -57,14 +57,14 @@
 
 (function() {
     'use strict';
-    
+
     const waitTime = 10;
     const S_THUMB = 'https://i.ibb.co/ks0qXqqY/B57-FBD3-E-489-E-4-F0-D-A5-C0-08017-DA44-C4-E.png';
     const META_UPDATE_URL = "https://raw.githubusercontent.com/VortexBypass/AFK-.lol-Bypass/refs/heads/main/AFKdotlol.meta.js";
     const USER_SCRIPT_URL = "https://raw.githubusercontent.com/VortexBypass/AFK-.lol-Bypass/refs/heads/main/AFKdotlol.user.js";
     const META_VERSION_KEY = 'afkLol_meta_version_v1';
     const META_SNAPSHOT_KEY = 'afkLol_meta_snapshot_v1';
-    
+
     let hasRun = false;
     let notificationShown = false;
     let updateDetected = false;
@@ -149,7 +149,6 @@
             font-size: 15px;
             text-align: center;
         }
-
         #afkLol-notification {
             position: fixed;
             top: 20px;
@@ -164,7 +163,6 @@
             font-weight: 600;
             font-size: 14px;
         }
-
         #afkLol-api-timer {
             position: fixed;
             top: 70px;
@@ -179,7 +177,6 @@
             font-weight: 600;
             font-size: 14px;
         }
-
         #afkLol-wait-box {
             position: fixed;
             top: 0;
@@ -223,7 +220,6 @@
             color: #b9c7e6;
             text-align: center;
         }
-
         #afkLol-update-modal {
             position: fixed;
             top: 0;
@@ -272,7 +268,6 @@
             font-weight: 700;
             font-size: 16px;
         }
-
         @media (max-width: 480px) {
             #afkLol-modal-content,
             #afkLol-wait-content,
@@ -338,14 +333,23 @@
 
     const style = document.createElement('style');
     style.textContent = styleCSS;
-    document.head.appendChild(style);
+    try {
+        (document.head || document.documentElement).appendChild(style);
+    } catch (e) {
+        document.addEventListener('DOMContentLoaded', () => {
+            try {
+                (document.head || document.documentElement).appendChild(style);
+            } catch (err) {}
+        }, { once: true });
+    }
 
     function showNotification() {
         if (notificationShown) return;
         notificationShown = true;
         const notification = document.createElement("div");
         notification.innerHTML = notificationHTML;
-        document.body.appendChild(notification);
+        const container = notification.firstElementChild || notification;
+        (document.body || document.documentElement).appendChild(container);
         setTimeout(() => {
             const notif = document.getElementById("afkLol-notification");
             if (notif) notif.remove();
@@ -355,7 +359,8 @@
     function showApiTimer() {
         const timer = document.createElement("div");
         timer.innerHTML = apiTimerHTML;
-        document.body.appendChild(timer);
+        const container = timer.firstElementChild || timer;
+        (document.body || document.documentElement).appendChild(container);
         const apiStartTime = performance.now();
         const apiTimerInterval = setInterval(() => {
             const currentTime = performance.now();
@@ -364,7 +369,7 @@
             if (timeEl) {
                 timeEl.textContent = elapsed.toFixed(2);
             }
-        }, 10);
+        }, 50);
         return apiTimerInterval;
     }
 
@@ -383,19 +388,18 @@
     function showWaitBox(callback) {
         const waitBox = document.createElement("div");
         waitBox.innerHTML = waitBoxHTML;
-        document.body.appendChild(waitBox);
-
+        const container = waitBox.firstElementChild || waitBox;
+        (document.body || document.documentElement).appendChild(container);
         let counter = waitTime;
         const countdownEl = document.getElementById("afkLol-wait-counter");
-        
         const interval = setInterval(() => {
             counter--;
             if (countdownEl) countdownEl.textContent = counter;
-            
             if (counter <= 0) {
                 clearInterval(interval);
-                waitBox.remove();
-                callback();
+                const wb = document.getElementById("afkLol-wait-box");
+                if (wb) wb.remove();
+                try { callback(); } catch (e) {}
             }
         }, 1000);
     }
@@ -405,15 +409,16 @@
         if (document.getElementById("afkLol-modal")) return;
         const modalContainer = document.createElement("div");
         modalContainer.innerHTML = modalHTML;
-        document.body.appendChild(modalContainer);
-
+        const container = modalContainer.firstElementChild || modalContainer;
+        (document.body || document.documentElement).appendChild(container);
         const linkInput = document.getElementById("afkLol-link");
         const redirectTimer = document.getElementById("afkLol-redirect-timer");
-
         if (linkInput) {
             linkInput.value = link;
             linkInput.addEventListener("click", () => {
-                navigator.clipboard.writeText(link);
+                try {
+                    navigator.clipboard.writeText(link);
+                } catch (e) {}
                 const originalValue = linkInput.value;
                 linkInput.value = "Copied!";
                 linkInput.style.background = "rgba(16, 185, 129, 0.15)";
@@ -423,9 +428,7 @@
                 }, 1000);
             });
         }
-
         const isUrl = /^https?:\/\//.test(link);
-
         if (isUrl && redirectTimer) {
             let countdown = 15;
             const countdownEl = document.getElementById("afkLol-countdown");
@@ -434,18 +437,18 @@
                 if (countdownEl) countdownEl.textContent = countdown;
                 if (countdown <= 0) {
                     clearInterval(redirectInterval);
-                    window.location.href = link;
+                    try { window.location.href = link; } catch (e) {}
                 }
             }, 1000);
-
-            document.addEventListener("keydown", function escListener(e) {
+            function escListener(e) {
                 if (e.key === "Escape") {
                     clearInterval(redirectInterval);
                     const modal = document.getElementById("afkLol-modal");
                     if (modal) modal.remove();
                     document.removeEventListener("keydown", escListener);
                 }
-            });
+            }
+            document.addEventListener("keydown", escListener);
         } else if (redirectTimer) {
             redirectTimer.textContent = "Result displayed above";
             redirectTimer.style.background = "linear-gradient(90deg,#10b981,#06b6d4)";
@@ -454,13 +457,13 @@
 
     function showUpdateModal(newVersion) {
         updateDetected = true;
+        if (document.getElementById("afkLol-update-modal")) return;
         const updateContainer = document.createElement("div");
         updateContainer.innerHTML = updateModalHTML;
-        document.body.appendChild(updateContainer);
-
+        const container = updateContainer.firstElementChild || updateContainer;
+        (document.body || document.documentElement).appendChild(container);
         const versionEl = document.getElementById("afkLol-new-version");
         if (versionEl) versionEl.textContent = newVersion || "unknown";
-
         const updateBtn = document.getElementById("afkLol-update-btn");
         if (updateBtn) {
             updateBtn.addEventListener("click", () => {
@@ -474,60 +477,58 @@
                         }
                     }
                 } catch (err) {}
-                GM_openInTab(USER_SCRIPT_URL, {active: true});
+                try { GM_openInTab(USER_SCRIPT_URL, {active: true}); } catch (e) { window.open(USER_SCRIPT_URL, "_blank"); }
             });
         }
     }
 
     function checkForUpdates() {
-        fetch(META_UPDATE_URL + '?t=' + new Date().getTime(), { cache: 'no-store' })
-            .then(response => {
-                if (!response.ok) throw new Error('Network response was not ok: ' + response.status);
-                return response.text();
-            })
-            .then(metaText => {
-                lastFetchedMetaText = metaText;
-                const versionMatch = metaText.match(/@version\s+([^\r\n]+)/);
-                const latestMetaVersion = versionMatch ? versionMatch[1].trim() : null;
-
-                const localVersion = (typeof GM_info !== 'undefined' && GM_info && GM_info.script && GM_info.script.version)
-                    ? GM_info.script.version
-                    : null;
-
-                if (localVersion) {
-                    if (latestMetaVersion && latestMetaVersion !== localVersion) {
-                        showUpdateModal(latestMetaVersion);
-                        return;
-                    }
-                    return;
-                }
-
-                try {
-                    if (latestMetaVersion) {
-                        const stored = localStorage.getItem(META_VERSION_KEY);
-                        if (!stored) {
-                            localStorage.setItem(META_VERSION_KEY, latestMetaVersion);
-                            return;
-                        }
-                        if (stored !== latestMetaVersion) {
+        try {
+            fetch(META_UPDATE_URL + '?t=' + new Date().getTime(), { cache: 'no-store' })
+                .then(response => {
+                    if (!response.ok) throw new Error('Network response was not ok: ' + response.status);
+                    return response.text();
+                })
+                .then(metaText => {
+                    lastFetchedMetaText = metaText;
+                    const versionMatch = metaText.match(/@version\s+([^\r\n]+)/);
+                    const latestMetaVersion = versionMatch ? versionMatch[1].trim() : null;
+                    const localVersion = (typeof GM_info !== 'undefined' && GM_info && GM_info.script && GM_info.script.version)
+                        ? GM_info.script.version
+                        : null;
+                    if (localVersion) {
+                        if (latestMetaVersion && latestMetaVersion !== localVersion) {
                             showUpdateModal(latestMetaVersion);
                             return;
                         }
                         return;
                     }
-
-                    const storedSnap = localStorage.getItem(META_SNAPSHOT_KEY);
-                    if (!storedSnap) {
-                        localStorage.setItem(META_SNAPSHOT_KEY, metaText);
-                        return;
-                    }
-                    if (storedSnap !== metaText) {
-                        showUpdateModal('updated');
-                        return;
-                    }
-                } catch (err) {}
-            })
-            .catch(err => console.error("Update check failed:", err));
+                    try {
+                        if (latestMetaVersion) {
+                            const stored = localStorage.getItem(META_VERSION_KEY);
+                            if (!stored) {
+                                localStorage.setItem(META_VERSION_KEY, latestMetaVersion);
+                                return;
+                            }
+                            if (stored !== latestMetaVersion) {
+                                showUpdateModal(latestMetaVersion);
+                                return;
+                            }
+                            return;
+                        }
+                        const storedSnap = localStorage.getItem(META_SNAPSHOT_KEY);
+                        if (!storedSnap) {
+                            localStorage.setItem(META_SNAPSHOT_KEY, metaText);
+                            return;
+                        }
+                        if (storedSnap !== metaText) {
+                            showUpdateModal('updated');
+                            return;
+                        }
+                    } catch (err) {}
+                })
+                .catch(err => {});
+        } catch (e) {}
     }
 
     function extractUrlFromPage() {
@@ -542,11 +543,8 @@
     function runBypass() {
         if (hasRun || updateDetected) return;
         hasRun = true;
-
         const targetUrl = extractUrlFromPage();
-
         showNotification();
-
         if (waitTime > 0) {
             showWaitBox(() => {
                 executeApiCall(targetUrl);
@@ -558,33 +556,33 @@
 
     function executeApiCall(url) {
         const apiTimerInterval = showApiTimer();
-        
-        if (typeof window.AFK_API === 'function') {
-            window.AFK_API(url, (error, result) => {
+        try {
+            if (typeof window.AFK_API === 'function') {
+                window.AFK_API(url, (error, result) => {
+                    hideApiTimer(apiTimerInterval);
+                    if (error) {
+                        showBypassModal('Error: ' + error);
+                        return;
+                    }
+                    if (!result) {
+                        showBypassModal('No response from API');
+                        return;
+                    }
+                    const resultText = typeof result === 'string' ? result : JSON.stringify(result, null, 2);
+                    const urlMatch = resultText.match(/https?:\/\/[^\s"']+/);
+                    if (urlMatch) {
+                        showBypassModal(urlMatch[0]);
+                    } else {
+                        showBypassModal(resultText);
+                    }
+                });
+            } else {
                 hideApiTimer(apiTimerInterval);
-                
-                if (error) {
-                    showBypassModal('Error: ' + error);
-                    return;
-                }
-
-                if (!result) {
-                    showBypassModal('No response from API');
-                    return;
-                }
-
-                const resultText = typeof result === 'string' ? result : JSON.stringify(result, null, 2);
-                
-                const urlMatch = resultText.match(/https?:\/\/[^\s"']+/);
-                if (urlMatch) {
-                    showBypassModal(urlMatch[0]);
-                } else {
-                    showBypassModal(resultText);
-                }
-            });
-        } else {
+                showBypassModal('API not available. Please refresh.');
+            }
+        } catch (e) {
             hideApiTimer(apiTimerInterval);
-            showBypassModal('API not available. Please refresh.');
+            showBypassModal('API call failed');
         }
     }
 
@@ -592,18 +590,15 @@
         setTimeout(() => {
             checkForUpdates();
         }, 2000);
-
         if (document.readyState === 'loading') {
             document.addEventListener('DOMContentLoaded', runBypass);
         } else {
-            setTimeout(runBypass, 1000);
+            setTimeout(runBypass, 500);
         }
-
         window.addEventListener('hashchange', () => {
             hasRun = false;
             setTimeout(runBypass, 500);
         });
-
         window.addEventListener('popstate', () => {
             hasRun = false;
             setTimeout(runBypass, 500);
